@@ -1,26 +1,29 @@
 CREATE TABLE user(
 	id int(11) NOT NULL AUTO_INCREMENT,
-	userName varchar (25) NOT NULL,
+	userName varchar (255) NOT NULL UNIQUE,
 	passwd varchar (255) NOT NULL,
-	eMail varchar (255) NOT NULL,
+	name varchar(255),
+	subname varchar(255),
 	admin boolean DEFAULT 0,
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE type(
+CREATE TABLE music_type(
 	id int(11) NOT NULL AUTO_INCREMENT,
-	name varchar (25) NOT NULL,
+	name varchar (255) NOT NULL,
 	PRIMARY KEY (id)
 );
-
 CREATE TABLE music(
 	id int(11) NOT NULL AUTO_INCREMENT,
 	name varchar (100) NOT NULL,
-	year DATE,
-	type int (11) NOT NULL,
-	`path` varchar(255) COLLATE utf8_unicode_ci,
+	year_creation int,
+	music_type int (11) NOT NULL,
+	up_year int,
+	up_weekint tinyint,
+	uploaded_by int,
 	PRIMARY KEY (id),
-	FOREIGN KEY (type) REFERENCES type(id)
+	FOREIGN KEY (uploaded_by) REFERENCES user(id),
+	FOREIGN KEY (music_type) REFERENCES music_type(id)
 
 );
 
@@ -28,9 +31,9 @@ CREATE TABLE playlist(
 	id int(11) NOT NULL AUTO_INCREMENT,
 	name varchar (25) NOT NULL,
 	public boolean DEFAULT 0,
-	creator int(11) NOT NULL,
+	owner_id int(11) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (creator) REFERENCES user(id)
+	FOREIGN KEY (owner_id) REFERENCES user(id)
 
 );
 
@@ -48,7 +51,7 @@ CREATE TABLE album(
 
 
 
-CREATE TABLE userPlaylistFollow(
+CREATE TABLE user_playlist_follow(
 	id int(11) NOT NULL AUTO_INCREMENT,
 	user_id int(11) NOT NULL,
 	playlist_id int(11) NOT NULL,
@@ -58,31 +61,29 @@ CREATE TABLE userPlaylistFollow(
 );
 
 CREATE TABLE musicAlbum(
-	id int (11) NOT NULL AUTO_INCREMENT,
-	music int (11) NOT NULL,
-	album int (11) NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (music) REFERENCES music(id),
-	FOREIGN KEY (album) REFERENCES album(id)
+	music_id int (11) NOT NULL,
+	album_id int (11) NOT NULL,
+	PRIMARY KEY (music_id,album_id),
+	FOREIGN KEY (music_id) REFERENCES music(id),
+	FOREIGN KEY (album_id) REFERENCES album(id)
 );
 
 CREATE TABLE musicArtist(
-	id int (11) NOT NULL AUTO_INCREMENT,
-	music int (11) NOT NULL,
-	artist int (11) NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (music) REFERENCES music(id),
-	FOREIGN KEY (artist) REFERENCES artist(id)
+	music_id int (11) NOT NULL,
+	artist_id int (11) NOT NULL,
+	PRIMARY KEY (music_id,artist_id),
+	FOREIGN KEY (music_id) REFERENCES music(id),
+	FOREIGN KEY (artist_id) REFERENCES artist(id)
 );
 
 CREATE TABLE musicPlaylist(
 	id int (11) NOT NULL AUTO_INCREMENT,
-	music int (11) NOT NULL,
-	playlist int (11) NOT NULL,
-	adddate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	music_id int (11) NOT NULL,
+	playlist_id int (11) NOT NULL,
+	ordering int(11) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (music) REFERENCES music(id),
-	FOREIGN KEY (playlist) REFERENCES playlist(id)
+	FOREIGN KEY (music_id) REFERENCES music(id),
+	FOREIGN KEY (playlist_id) REFERENCES playlist(id)
 );
 
 SELECT music.name,music.year,type.name,AR.name,album.name,musicplaylist.adddate FROM `playlist` 
