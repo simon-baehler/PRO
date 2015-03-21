@@ -1,9 +1,9 @@
 CREATE TABLE user(
 	id int(11) NOT NULL AUTO_INCREMENT,
-	userName varchar (255) NOT NULL UNIQUE,
-	passwd varchar (255) NOT NULL,
+	user_name varchar (255) NOT NULL UNIQUE,
+	pass_word varchar (255) NOT NULL,
 	name varchar(255),
-	lastname varchar(255),
+	last_name varchar(255),
 	admin boolean DEFAULT 0,
 	PRIMARY KEY (id)
 );
@@ -30,7 +30,7 @@ CREATE TABLE music(
 CREATE TABLE playlist(
 	id int(11) NOT NULL AUTO_INCREMENT,
 	name varchar (25) NOT NULL,
-	public boolean DEFAULT 0,
+	access_level boolean DEFAULT 0,
 	owner_id int(11) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (owner_id) REFERENCES user(id)
@@ -55,7 +55,7 @@ CREATE TABLE user_playlist_follow(
 	id int(11) NOT NULL AUTO_INCREMENT,
 	user_id int(11) NOT NULL,
 	playlist_id int(11) NOT NULL,
-	PRIMARY KEY (id),
+	PRIMARY KEY (user_id,playlist_id),
 	FOREIGN KEY (user_id) REFERENCES user(id),
 	FOREIGN KEY (playlist_id) REFERENCES playlist(id)
 );
@@ -103,4 +103,15 @@ SELECT distinct playlist.name AS 'playlist', music.name AS 'Title' ,music.year_c
     INNER JOIN music_type 
     	ON music.music_type = music_type.id
     INNER JOIN user_playlist_follow 
-    	ON playlist.id = user_playlist_follow.playlist_id
+    	ON playlist.id = user_playlist_follow.playlist_id ;
+		
+CREATE  VIEW type_artist SELECT artist.name AS artist,music_type.name AS type FROM artist 
+	INNER JOIN music_artist
+    	ON music_artist.artist_id = artist.id
+    INNER JOIN music
+    	ON music.id = music_artist.music_id
+    INNER JOIN music_type
+    	ON music_type.id = music.music_type ;
+        
+    	
+
