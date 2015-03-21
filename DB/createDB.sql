@@ -32,6 +32,7 @@ CREATE TABLE playlist(
 	name varchar (25) NOT NULL,
 	access_level boolean DEFAULT 0,
 	owner_id int(11) NOT NULL,
+	UNIQUE(name, owner_id),
 	PRIMARY KEY (id),
 	FOREIGN KEY (owner_id) REFERENCES user(id)
 
@@ -52,7 +53,6 @@ CREATE TABLE album(
 
 
 CREATE TABLE user_playlist_follow(
-	id int(11) NOT NULL AUTO_INCREMENT,
 	user_id int(11) NOT NULL,
 	playlist_id int(11) NOT NULL,
 	PRIMARY KEY (user_id,playlist_id),
