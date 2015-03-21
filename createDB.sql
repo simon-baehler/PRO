@@ -3,7 +3,7 @@ CREATE TABLE user(
 	userName varchar (255) NOT NULL UNIQUE,
 	passwd varchar (255) NOT NULL,
 	name varchar(255),
-	subname varchar(255),
+	lastname varchar(255),
 	admin boolean DEFAULT 0,
 	PRIMARY KEY (id)
 );
@@ -60,7 +60,7 @@ CREATE TABLE user_playlist_follow(
 	FOREIGN KEY (playlist_id) REFERENCES playlist(id)
 );
 
-CREATE TABLE musicAlbum(
+CREATE TABLE music_Album(
 	music_id int (11) NOT NULL,
 	album_id int (11) NOT NULL,
 	PRIMARY KEY (music_id,album_id),
@@ -68,7 +68,7 @@ CREATE TABLE musicAlbum(
 	FOREIGN KEY (album_id) REFERENCES album(id)
 );
 
-CREATE TABLE musicArtist(
+CREATE TABLE music_Artist(
 	music_id int (11) NOT NULL,
 	artist_id int (11) NOT NULL,
 	PRIMARY KEY (music_id,artist_id),
@@ -76,7 +76,7 @@ CREATE TABLE musicArtist(
 	FOREIGN KEY (artist_id) REFERENCES artist(id)
 );
 
-CREATE TABLE musicPlaylist(
+CREATE TABLE music_Playlist(
 	id int (11) NOT NULL AUTO_INCREMENT,
 	music_id int (11) NOT NULL,
 	playlist_id int (11) NOT NULL,
@@ -86,14 +86,21 @@ CREATE TABLE musicPlaylist(
 	FOREIGN KEY (playlist_id) REFERENCES playlist(id)
 );
 
-SELECT music.name,music.year,type.name,AR.name,album.name,musicplaylist.adddate FROM `playlist` 
-	INNER JOIN musicplaylist ON playlist.id = musicplaylist.playlist 
-    INNER JOIN music ON musicplaylist.music = music.id 
-    INNER JOIN musicalbum ON music.id = musicalbum.music 
-    INNER JOIN album ON album.id = musicalbum.album 
-    INNER JOIN musicartist ON music.id = musicalbum.music 
-    INNER JOIN artist AS AR ON musicartist.artist = AR.id 
-    INNER JOIN type ON music.type = type.id
-    INNER JOIN userplaylistfollow ON userplaylistfollow.playlist_id = playlist.id
-    INNER JOIN user ON user.id = userplaylistfollow.user_id
-	
+CREATE VIEW Playlist_user AS
+SELECT distinct playlist.name AS 'playlist', music.name AS 'Title' ,music.year_creation, music_type.name AS ' Type',artist.name AS 'Artist' ,album.name AS 'Album' FROM `playlist` 
+	INNER JOIN music_playlist 
+    	ON playlist.id = music_playlist.playlist_id 
+    INNER JOIN music 
+    	ON music_playlist.music_id = music.id 
+    INNER JOIN music_album 
+    	ON music.id = music_album.music_id 
+    INNER JOIN album 
+    	ON album.id = music_album.album_id 
+    INNER JOIN music_artist 
+    	ON music.id = music_artist.music_id 
+    INNER JOIN artist 
+    	ON music_artist.artist_id = artist.id 
+    INNER JOIN music_type 
+    	ON music.music_type = music_type.id
+    INNER JOIN user_playlist_follow 
+    	ON playlist.id = user_playlist_follow.playlist_id
